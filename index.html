@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- ===== HEADER ===== -->
   <header class="site-header">
     <div class="logo">KISIWA BLACKMARKET</div>
 
@@ -18,11 +19,13 @@
     <div class="header-actions">
       <button id="darkToggle" aria-pressed="false" title="Toggle dark mode">🌙</button>
       <a href="login.html" class="btn small" id="authBtn">Login</a>
-      <button id="cartBtn" class="btn small">Cart (<span id="cartCount">0</span>)</button>
+      <button id="cartBtn" class="btn small">🛒 Cart (<span id="cartCount">0</span>)</button>
     </div>
   </header>
 
+  <!-- ===== MAIN CONTENT ===== -->
   <main class="container">
+    <!-- FILTER SIDEBAR -->
     <aside class="filters">
       <h3>Filters</h3>
 
@@ -59,16 +62,14 @@
           <option value="rating-desc">Rating</option>
         </select>
       </div>
-    
-    <button id="cart-btn">🛒 Cart</button>
-      <div id="cart-box" class="hidden">
-           <!-- your cart items -->
-      </div>
 
-      <button id="applyFilters" class="btn">Apply</button>
-      <button id="resetFilters" class="btn ghost">Reset</button>
+      <div class="filter-actions">
+        <button id="applyFilters" class="btn">Apply</button>
+        <button id="resetFilters" class="btn ghost">Reset</button>
+      </div>
     </aside>
 
+    <!-- PRODUCTS SECTION -->
     <section class="products-section">
       <div class="products-header">
         <h2>Products</h2>
@@ -80,15 +81,15 @@
     </section>
   </main>
 
-  <!-- Cart drawer -->
+  <!-- ===== CART DRAWER ===== -->
   <aside id="cartDrawer" class="cart-drawer" hidden>
     <div class="cart-header">
       <h3>Your Cart</h3>
-      <button id="closeCart">Close</button>
+      <button id="closeCart">✕</button>
     </div>
     <div id="cartItems" class="cart-items"></div>
     <div class="cart-footer">
-      <div>Total: <strong id="cartTotal">KSh0.00</strong></div>
+      <div>Total: <strong id="cartTotal">KSh 0.00</strong></div>
       <div class="cart-actions">
         <a href="checkout.html" class="btn">Checkout</a>
         <button id="clearCart" class="btn ghost">Clear</button>
@@ -98,6 +99,7 @@
 
   <div id="cartOverlay" class="cart-overlay" hidden></div>
 
+  <!-- ===== TEMPLATE ===== -->
   <template id="productCardTemplate">
     <article class="product-card">
       <img class="product-img" alt="">
@@ -116,9 +118,10 @@
     </article>
   </template>
 
+  <!-- ===== FOOTER ===== -->
   <footer class="footer-note">
     <a href="./public/contact.html" class="footer-link">
-      Made by (Semor family). Thank you for your support
+      Made by Semor Family. Thank you for your support ❤️
     </a>
   </footer>
 
