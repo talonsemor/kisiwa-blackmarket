@@ -1,4 +1,4 @@
-/* -------- script.js (clean final version) -------- */
+/* -------- script.js (clean final version — fixed) -------- */
 
 /* Demo products */
 const PRODUCTS = [
@@ -136,7 +136,7 @@ if ($('productsGrid')) {
     filtered = PRODUCTS.slice();
     render();
   };
-  searchInput.oninput = () => applyFilters();
+  searchInput.oninput = applyFilters;
   $('clearSearchBtn').onclick = () => { searchInput.value = ''; applyFilters(); };
 
   // Cart handling
@@ -221,14 +221,15 @@ function closeCart() {
   }, 350);
 }
 
-cartBtn.onclick = openCart;
-closeCartBtn.onclick = closeCart;
-cartOverlay.onclick = closeCart;
+if (cartBtn && closeCartBtn && cartOverlay && clearCartBtn) {
+  cartBtn.onclick = openCart;
+  closeCartBtn.onclick = closeCart;
+  cartOverlay.onclick = closeCart;
+  clearCartBtn.onclick = () => {
+    localStorage.removeItem('cart');
+    updateCartUI();
+  };
+}
 
-clearCartBtn.onclick = () => {
-  localStorage.removeItem('cart');
-  updateCartUI();
-};
-
-// Ensure cart count visible
+/* Ensure cart count visible */
 updateCartUI();

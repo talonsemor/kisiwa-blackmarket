@@ -407,6 +407,27 @@ body.dark .footer-link:hover {
   color: #ddd;
 }
 
+#cart-box {
+  position: fixed;
+  right: 10px;
+  top: 60px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  width: 90%;
+  max-width: 350px;
+  display: none;
+  z-index: 9999;
+}
+
+#cart-box.show {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
 /* ===================== */
 /* RESPONSIVE */
 /* ===================== */
