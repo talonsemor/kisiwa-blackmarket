@@ -1,6 +1,8 @@
-/* -------- script.js (clean final version — fixed) -------- */
+/* =========================================================
+   E-COMMERCE SCRIPT.JS — UNIVERSAL CART + TOAST + FILTERS
+   ========================================================= */
 
-/* Demo products */
+/* -------- Demo Products -------- */
 const PRODUCTS = [
   { id: 1, title: "Afrigas 13kg", category: "Kitchen", price: 2800, rating: 4.2,
     image: "images/Afrigas 13kg.jpg", desc: "Empty gas cylinder in good condition and good for commercial use." },
@@ -16,46 +18,51 @@ const PRODUCTS = [
     image: "images/One Seater Sofa.jpg", desc: "Be your own boss and enjoy the comfort of your home." },
   { id: 7, title: "Study Table", category: "Furniture", price: 800, rating: 4.1,
     image: "images/Study Table.jpg", desc: "Your studies are made easier with space to store files." },
-  { id: 8, title: "TCL smart 32inch", category: "Accessories", price: 8000, rating: 4.6,
+  { id: 8, title: "TCL Smart 32inch", category: "Accessories", price: 8000, rating: 4.6,
     image: "images/TCL smart 32inch.jpg", desc: "One month used, good as new." },
-  { id: 9, title: "Toshiba disk drive", category: "Computers", price: 3300, rating: 4.0,
+  { id: 9, title: "Toshiba Disk Drive", category: "Computers", price: 3300, rating: 4.0,
     image: "images/Toshiba disk drive.jpg", desc: "1TB and 500GB both in good health, Windows 11 installed." },
 ];
 
-/* Helpers */
+/* -------- Helpers -------- */
 const $ = id => document.getElementById(id);
 const formatKSh = n => `KSh${n.toFixed(2)}`;
 const escapeHtml = s => String(s).replace(/[&<>"']/g, c => (
   { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]
 ));
 
-/* Cart storage helpers */
-function loadCart(){ return JSON.parse(localStorage.getItem('cart') || '[]'); }
-function saveCart(cart){ localStorage.setItem('cart', JSON.stringify(cart)); updateCartUI(); }
+function loadCart() {
+  return JSON.parse(localStorage.getItem('cart') || '[]');
+}
+function saveCart(cart) {
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartUI();
+}
 
-/* Cart elements */
+/* -------- Global Cart Elements -------- */
 const cartDrawer = $('cartDrawer');
 const closeCartBtn = $('closeCart');
 const clearCartBtn = $('clearCart');
 const cartBtn = $('cartBtn');
 const cartOverlay = $('cartOverlay');
+const cartBottom = document.querySelector('.cart-bottom'); // for mobile
 
-/* ---------- Main Page logic ---------- */
+/* -------- Product Page Logic -------- */
 if ($('productsGrid')) {
   const PAGE_SIZE = 8;
   let currentPage = 1, filtered = PRODUCTS.slice();
 
+  const productsGrid = $('productsGrid');
+  const resultsInfo = $('resultsInfo');
+  const pagination = $('pagination');
   const categoryFilter = $('categoryFilter');
   const ratingFilter = $('ratingFilter');
   const sortSelect = $('sortSelect');
   const minPriceEl = $('minPrice');
   const maxPriceEl = $('maxPrice');
   const searchInput = $('searchInput');
-  const productsGrid = $('productsGrid');
-  const resultsInfo = $('resultsInfo');
-  const pagination = $('pagination');
 
-  // Populate category dropdown
+  /* Populate Category Dropdown */
   const cats = [...new Set(PRODUCTS.map(p => p.category))];
   cats.forEach(c => {
     const opt = document.createElement('option');
@@ -63,18 +70,20 @@ if ($('productsGrid')) {
     categoryFilter.appendChild(opt);
   });
 
-  // Render products
-  function render(){
+  /* Render Products */
+  function render() {
     productsGrid.innerHTML = '';
     const start = (currentPage - 1) * PAGE_SIZE;
     const items = filtered.slice(start, start + PAGE_SIZE);
     resultsInfo.textContent = `Showing ${start + 1}-${Math.min(start + items.length, filtered.length)} of ${filtered.length}`;
-    const tmpl = $('productCardTemplate').content;
+
     if (!items.length) {
       productsGrid.innerHTML = '<p class="muted">No products found.</p>';
       pagination.innerHTML = '';
       return;
     }
+
+    const tmpl = $('productCardTemplate').content;
     items.forEach(p => {
       const node = tmpl.cloneNode(true);
       node.querySelector('.product-img').src = p.image;
@@ -89,7 +98,8 @@ if ($('productsGrid')) {
     renderPages();
   }
 
-  function renderPages(){
+  /* Pagination */
+  function renderPages() {
     pagination.innerHTML = '';
     const pages = Math.ceil(filtered.length / PAGE_SIZE);
     for (let i = 1; i <= pages; i++) {
@@ -102,8 +112,8 @@ if ($('productsGrid')) {
     }
   }
 
-  // Filters
-  function applyFilters(){
+  /* Filters */
+  function applyFilters() {
     const q = searchInput.value.trim().toLowerCase();
     const cat = categoryFilter.value;
     const min = +minPriceEl.value || 0;
@@ -123,7 +133,8 @@ if ($('productsGrid')) {
     if (sort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
     if (sort === 'rating-desc') filtered.sort((a, b) => b.rating - a.rating);
 
-    currentPage = 1; render();
+    currentPage = 1;
+    render();
   }
 
   $('applyFilters').onclick = applyFilters;
@@ -139,40 +150,53 @@ if ($('productsGrid')) {
   searchInput.oninput = applyFilters;
   $('clearSearchBtn').onclick = () => { searchInput.value = ''; applyFilters(); };
 
-  // Cart handling
+  /* -------- Cart Handling -------- */
   const cartItems = $('cartItems');
   const cartTotal = $('cartTotal');
   const cartCount = $('cartCount');
 
-  function updateCartUI(){
+  function updateCartUI() {
     const cart = loadCart();
     if (cartCount) cartCount.textContent = cart.reduce((s, i) => s + i.qty, 0);
     if (!cartItems) return;
     cartItems.innerHTML = '';
     let total = 0;
-    if (!cart.length) { cartItems.innerHTML = '<p class="muted">Empty cart.</p>'; }
-    else cart.forEach(i => {
-      total += i.price * i.qty;
-      const d = document.createElement('div');
-      d.className = 'cart-item';
-      d.innerHTML = `
-        <img src="${i.image}">
-        <div style="flex:1">
-          <strong>${escapeHtml(i.title)}</strong>
-          <div class="muted">${formatKSh(i.price)} × ${i.qty}</div>
-        </div>`;
-      cartItems.appendChild(d);
-    });
+    if (!cart.length) {
+      cartItems.innerHTML = '<p class="muted">Empty cart.</p>';
+    } else {
+      cart.forEach(i => {
+        total += i.price * i.qty;
+        const d = document.createElement('div');
+        d.className = 'cart-item';
+        d.innerHTML = `
+          <img src="${i.image}">
+          <div style="flex:1">
+            <strong>${escapeHtml(i.title)}</strong>
+            <div class="muted">${formatKSh(i.price)} × ${i.qty}</div>
+          </div>`;
+        cartItems.appendChild(d);
+      });
+    }
     if (cartTotal) cartTotal.textContent = formatKSh(total);
   }
 
-  function addToCart(id){
+  /* Toast Message */
+  function showItemAddedMessage() {
+    const msg = document.getElementById('itemAddedMsg');
+    if (!msg) return;
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 2000);
+  }
+
+  /* Add to Cart */
+  function addToCart(id) {
     const p = PRODUCTS.find(x => x.id == id);
     if (!p) return;
     const cart = loadCart();
     const f = cart.find(c => c.id == id);
     f ? f.qty++ : cart.push({ id: p.id, title: p.title, price: p.price, image: p.image, qty: 1 });
     saveCart(cart);
+    showItemAddedMessage();
   }
 
   productsGrid.onclick = e => {
@@ -182,7 +206,7 @@ if ($('productsGrid')) {
   updateCartUI();
   render();
 
-  // Dark mode toggle
+  /* -------- Dark Mode -------- */
   const darkBtn = $('darkToggle');
   if (darkBtn) {
     if (localStorage.dark === '1') document.body.classList.add('dark');
@@ -192,7 +216,7 @@ if ($('productsGrid')) {
     };
   }
 
-  // Auth
+  /* -------- Auth -------- */
   const auth = $('authBtn');
   if (auth) {
     const u = localStorage.currentUser;
@@ -203,33 +227,49 @@ if ($('productsGrid')) {
   }
 }
 
-/* ---------- Cart overlay logic (global) ---------- */
+/* =========================================================
+   UNIVERSAL CART TOGGLE (DESKTOP + MOBILE)
+   ========================================================= */
 function openCart() {
-  cartDrawer.classList.add('open');
-  cartOverlay.classList.add('active');
-  cartDrawer.hidden = false;
+  const isMobile = window.matchMedia('(max-width: 880px)').matches;
+  if (isMobile && cartBottom) {
+    cartBottom.classList.add('show');
+  } else {
+    cartDrawer.classList.add('open');
+    cartDrawer.hidden = false;
+  }
+  cartOverlay.classList.add('show');
   cartOverlay.hidden = false;
   updateCartUI();
 }
 
 function closeCart() {
-  cartDrawer.classList.remove('open');
-  cartOverlay.classList.remove('active');
+  const isMobile = window.matchMedia('(max-width: 880px)').matches;
+  if (isMobile && cartBottom) {
+    cartBottom.classList.remove('show');
+  } else {
+    cartDrawer.classList.remove('open');
+  }
+  cartOverlay.classList.remove('show');
   setTimeout(() => {
     cartDrawer.hidden = true;
     cartOverlay.hidden = true;
-  }, 350);
+  }, 300);
 }
 
-if (cartBtn && closeCartBtn && cartOverlay && clearCartBtn) {
-  cartBtn.onclick = openCart;
-  closeCartBtn.onclick = closeCart;
-  cartOverlay.onclick = closeCart;
-  clearCartBtn.onclick = () => {
+if (cartBtn && closeCartBtn && clearCartBtn && cartOverlay) {
+  cartBtn.addEventListener('click', openCart);
+  closeCartBtn.addEventListener('click', closeCart);
+  cartOverlay.addEventListener('click', closeCart);
+  clearCartBtn.addEventListener('click', () => {
     localStorage.removeItem('cart');
     updateCartUI();
-  };
+  });
 }
 
-/* Ensure cart count visible */
-updateCartUI();
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeCart();
+});
+
+
+

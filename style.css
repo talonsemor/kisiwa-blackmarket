@@ -428,6 +428,25 @@ body.dark .footer-link:hover {
   display: none;
 }
 
+#itemAddedMsg {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--accent, #0066ff);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 9999;
+}
+#itemAddedMsg.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ===================== */
 /* RESPONSIVE */
 /* ===================== */
@@ -451,3 +470,5 @@ body.dark .footer-link:hover {
     display: block;
   }
 }
+
+
