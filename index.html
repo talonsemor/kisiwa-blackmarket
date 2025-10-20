@@ -81,8 +81,8 @@
     </section>
   </main>
 
-  <!-- ===== CART DRAWER ===== -->
-  <aside id="cartDrawer" class="cart-drawer" hidden>
+  <!-- ===== CART DRAWER (DESKTOP) ===== -->
+  <aside id="cartDrawer" class="cart-drawer">
     <div class="cart-header">
       <h3>Your Cart</h3>
       <button id="closeCart">✕</button>
@@ -97,12 +97,35 @@
     </div>
   </aside>
 
-  <div id="cartOverlay" class="cart-overlay" hidden></div>
+  <!-- ===== MOBILE CART (BOTTOM DRAWER) ===== -->
+  <aside id="cartBottom" class="cart-bottom">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button id="closeCartMobile">✕</button>
+    </div>
+    <div id="cartItemsMobile" class="cart-items"></div>
+    <div class="cart-footer">
+      <div>Total: <strong id="cartTotalMobile">KSh 0.00</strong></div>
+      <div class="cart-actions">
+        <a href="checkout.html" class="btn">Checkout</a>
+        <button id="clearCartMobile" class="btn ghost">Clear</button>
+      </div>
+    </div>
+  </aside>
 
-  <!-- ===== TEMPLATE ===== -->
+  <!-- ===== CART OVERLAY ===== -->
+  <div id="cartOverlay" class="cart-overlay"></div>
+
+  <!-- ===== FLOATING CART BUTTON ===== -->
+  <button id="floatingCartBtn" class="cart-button">🛒</button>
+
+  <!-- ===== ITEM ADDED MESSAGE ===== -->
+  <div id="itemAddedMsg">Item added to cart ✅</div>
+
+  <!-- ===== PRODUCT TEMPLATE ===== -->
   <template id="productCardTemplate">
     <article class="product-card">
-      <img class="product-img" alt="">
+      <img class="product-img" alt="Product image">
       <div class="product-body">
         <h4 class="product-title"></h4>
         <div class="product-meta">
@@ -121,10 +144,11 @@
   <!-- ===== FOOTER ===== -->
   <footer class="footer-note">
     <a href="./public/contact.html" class="footer-link">
-      Made by Semor Family. Thank you for your support ❤️
+      Made by Semor Family. Thank you for your support 
     </a>
   </footer>
 
+  <!-- ===== SCRIPT ===== -->
   <script src="script.js"></script>
 </body>
 </html>
