@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clean Household — Sign up</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="auth-page">
+    <div class="auth-card">
+      <h2>Create account</h2>
+      <form id="signupForm">
+        <label>
+          Email
+          <input type="email" id="signupEmail" required />
+        </label>
+        <label>
+          Password
+          <input type="password" id="signupPassword" required minlength="4" />
+        </label>
+        <div class="form-row">
+          <button class="btn" type="submit">Sign up</button>
+          <a href="login.html" class="btn ghost">Login</a>
+        </div>
+        <div id="signupMsg" class="muted"></div>
+      </form>
+    </div>
+  </main>
+
+<script>
+document.getElementById('signupForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const email = document.getElementById('signupEmail').value.trim();
+  const pass = document.getElementById('signupPassword').value;
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  const msg = document.getElementById('signupMsg');
+
+  if (users[email]) {
+    msg.textContent = 'An account with this email exists.';
+    return;
+  }
+  users[email] = { password: pass };
+  localStorage.setItem('users', JSON.stringify(users));
+  localStorage.setItem('currentUser', email);
+  msg.textContent = 'Account created. Redirecting...';
+  setTimeout(()=>location.href='index.html',600);
+});
+</script>
+
+</body>
+</html>

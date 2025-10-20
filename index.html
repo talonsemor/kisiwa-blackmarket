@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kisiwa Blackmarket — Home</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">KISIWA BLACKMARKET</div>
+
+    <div class="search-area">
+      <input id="searchInput" type="search" placeholder="Search products..." />
+      <button id="clearSearchBtn" title="Clear search">✕</button>
+    </div>
+
+    <div class="header-actions">
+      <button id="darkToggle" aria-pressed="false" title="Toggle dark mode">🌙</button>
+      <a href="login.html" class="btn small" id="authBtn">Login</a>
+      <button id="cartBtn" class="btn small">Cart (<span id="cartCount">0</span>)</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <aside class="filters">
+      <h3>Filters</h3>
+
+      <div class="filter-group">
+        <label>Category</label>
+        <select id="categoryFilter">
+          <option value="all">All</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Price</label>
+        <div class="price-row">
+          <input id="minPrice" type="number" min="0" placeholder="Min" />
+          <input id="maxPrice" type="number" min="0" placeholder="Max" />
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Rating</label>
+        <select id="ratingFilter">
+          <option value="0">Any</option>
+          <option value="4">4★ & up</option>
+          <option value="3">3★ & up</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Sort by</label>
+        <select id="sortSelect">
+          <option value="relevance">Relevance</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="rating-desc">Rating</option>
+        </select>
+      </div>
+
+      <button id="applyFilters" class="btn">Apply</button>
+      <button id="resetFilters" class="btn ghost">Reset</button>
+    </aside>
+
+    <section class="products-section">
+      <div class="products-header">
+        <h2>Products</h2>
+        <div id="resultsInfo" class="muted"></div>
+      </div>
+
+      <div id="productsGrid" class="products-grid" aria-live="polite"></div>
+      <div id="pagination" class="pagination"></div>
+    </section>
+  </main>
+
+  <!-- Cart drawer -->
+  <aside id="cartDrawer" class="cart-drawer" hidden>
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button id="closeCart">Close</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-footer">
+      <div>Total: <strong id="cartTotal">KSh0.00</strong></div>
+      <div class="cart-actions">
+        <a href="checkout.html" class="btn">Checkout</a>
+        <button id="clearCart" class="btn ghost">Clear</button>
+      </div>
+    </div>
+  </aside>
+
+  <div id="cartOverlay" class="cart-overlay" hidden></div>
+
+  <template id="productCardTemplate">
+    <article class="product-card">
+      <img class="product-img" alt="">
+      <div class="product-body">
+        <h4 class="product-title"></h4>
+        <div class="product-meta">
+          <span class="price"></span>
+          <span class="rating muted"></span>
+        </div>
+        <p class="product-desc muted"></p>
+        <div class="product-actions">
+          <button class="btn addCart">Add to cart</button>
+          <button class="btn ghost viewBtn">View</button>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <footer class="footer-note">
+    <a href="./public/contact.html" class="footer-link">
+      Made by (Semor family). Thank you for your support
+    </a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

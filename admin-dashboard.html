@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 2rem;
+      background: #f9fafb;
+    }
+    h2 {
+      text-align: center;
+    }
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      margin: 1rem 0;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn.ghost {
+      background: #f43f5e;
+    }
+    .order-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h2>Orders Dashboard</h2>
+    <button id="logoutBtn" class="btn ghost">Logout</button>
+
+    <div id="ordersList">Loading orders...</div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCrL-tZ1fG64mD_1SUaXLsgVYIykW846vc",
+      authDomain: "kisiwa-blackmarket.firebaseapp.com",
+      projectId: "kisiwa-blackmarket",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 🔒 Protect this page
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        alert("Access denied. Please log in first.");
+        window.location.href = "admin-login.html";
+        return;
+      }
+
+      const ordersSnap = await getDocs(collection(db, "orders"));
+      const list = document.getElementById("ordersList");
+      list.innerHTML = "";
+
+      if (ordersSnap.empty) {
+        list.innerHTML = "<p>No orders found.</p>";
+        return;
+      }
+
+      ordersSnap.forEach((doc) => {
+        const order = doc.data();
+        const div = document.createElement("div");
+        div.className = "order-card";
+        div.innerHTML = `
+          <h4>${order.name} (${order.email})</h4>
+          <p><strong>Phone:</strong>  ${order.phone || 'N/A'}</p> 
+          <p><strong>Total:</strong> KSh ${order.total}</p>
+          <p><strong>Address:</strong> ${order.address}</p>
+          <p><strong>Items:</strong> ${order.cart?.length || 0}</p>
+          <hr>
+        `;
+        list.appendChild(div);
+      });
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").onclick = async () => {
+      await signOut(auth);
+      localStorage.removeItem("adminLoggedIn");
+      window.location.href = "admin-login.html";
+    };
+  </script>
+</body>
+</html>

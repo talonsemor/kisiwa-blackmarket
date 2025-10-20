@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clean Household — Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="auth-page">
+    <div class="auth-card">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label>
+          Email
+          <input type="email" id="loginEmail" required />
+        </label>
+        <label>
+          Password
+          <input type="password" id="loginPassword" required minlength="4" />
+        </label>
+        <div class="form-row">
+          <button type="submit" class="btn">Login</button>
+          <a href="signup.html" class="btn ghost">Sign up</a>
+        </div>
+        <div id="loginMsg" class="muted"></div>
+      </form>
+    </div>
+  </main>
+
+<script>
+  // Simple client-side login (demo only)
+  document.getElementById('loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    const users = JSON.parse(localStorage.getItem('users') || '{}');
+    const msg = document.getElementById('loginMsg');
+
+    if (users[email] && users[email].password === pass) {
+      localStorage.setItem('currentUser', email);
+      msg.textContent = 'Logged in. Redirecting to home...';
+      setTimeout(() => location.href = 'index.html', 600);
+    } else {
+      msg.textContent = 'Invalid credentials.';
+    }
+  });
+</script>
+</body>
+</html>

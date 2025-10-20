@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kisiwa Blackmarket — Checkout</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* --- Extra styling for spinner and modal --- */
+    .spinner {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.8);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+    .spinner::after {
+      content: "";
+      width: 60px;
+      height: 60px;
+      border: 6px solid #ccc;
+      border-top-color: var(--accent, #0066ff);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 90%;
+    }
+    .modal-content h3 {
+      margin-bottom: 1rem;
+      color: var(--text, #111827);
+    }
+    .modal-content button {
+      margin-top: 1rem;
+      background: var(--accent, #0066ff);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .modal-content button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">KISIWA BLACKMARKET</div>
+    <a href="index.html" class="btn small">Back</a>
+  </header>
+
+  <main class="container narrow">
+    <h2>Checkout</h2>
+    <div id="checkoutArea"></div>
+    <p id="status"></p>
+  </main>
+
+  <!-- Loading Spinner -->
+  <div class="spinner" id="spinner"></div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>✅ Order Placed Successfully!</h3>
+      <p>Thank you for shopping with Kisiwa Blackmarket.</p>
+      <button id="okBtn">OK</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    // ✅ Correct Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCrL-tZ1fG64mD_1SUaXLsgVYIykW846vc",
+      authDomain: "kisiwa-blackmarket.firebaseapp.com",
+      projectId: "kisiwa-blackmarket",
+      storageBucket: "kisiwa-blackmarket.firebasestorage.app",
+      messagingSenderId: "443707764935",
+      appId: "1:443707764935:web:c9a22ec9addc569e274ee2",
+      measurementId: "G-MHK784T8V9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const area = document.getElementById("checkoutArea");
+    const status = document.getElementById("status");
+    const spinner = document.getElementById("spinner");
+    const modal = document.getElementById("modal");
+    const okBtn = document.getElementById("okBtn");
+
+    // 🛒 Load cart and build checkout form dynamically
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    if (!cart.length) {
+      area.innerHTML = '<p>Your cart is empty. <a href="index.html">Shop now</a></p>';
+    } else {
+      const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+      area.innerHTML = `
+        <div class="order-summary">
+          <h3>Order Summary</h3>
+          <ul>
+            ${cart.map(i => `<li>${i.title} × ${i.qty} — KSh ${(i.price * i.qty).toFixed(2)}</li>`).join("")}
+          </ul>
+          <p><strong>Total: KSh ${total.toFixed(2)}</strong></p>
+        </div>
+
+        <form id="checkoutForm" class="checkout-form">
+          <label>Full Name <input type="text" id="name" required></label>
+          <label>Email <input type="email" id="email" required></label>
+          <label>Address <textarea id="address" required></textarea></label>
+          <label>Phone <input type="tel" id="phone" pattern="\\+?\\d+" required></label>
+          <button type="submit" class="btn">Place Order</button>
+        </form>
+      `;
+    }
+
+    // 🧾 Submit order to Firestore
+    document.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+
+      if (!cart.length) {
+        alert("Your cart is empty!");
+        return;
+      }
+
+      const order = {
+        name: form.querySelector("#name").value,
+        email: form.querySelector("#email").value,
+        address: form.querySelector("#address").value,
+        phone: form.querySelector("#phone").value,
+        cart,
+        total: cart.reduce((sum, i) => sum + i.price * i.qty, 0),
+        date: serverTimestamp(),
+      };
+
+      try {
+        spinner.style.display = "flex";
+        status.textContent = "";
+
+        await addDoc(collection(db, "orders"), order);
+
+        spinner.style.display = "none";
+        modal.style.display = "flex";
+
+        localStorage.removeItem("cart");
+        form.reset();
+      } catch (err) {
+        spinner.style.display = "none";
+        console.error(err);
+        status.textContent = "❌ Failed to place order.";
+      }
+    });
+
+    okBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
+
+
