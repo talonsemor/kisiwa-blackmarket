@@ -9,7 +9,7 @@ const PRODUCTS = [
   { id: 3, title: "Iconix Woofer", category: "Accessories", price: 2500, rating: 4.0, image: "images/Iconix Woofer.jpg", desc: "Digital sound system with maximum volume in good condition." },
   { id: 4, title: "Kenpoly Chair", category: "Household", price: 300, rating: 4.2, image: "images/Kenpoly Chair.jpg", desc: "Kenpoly always strong plastic chair." },
   { id: 5, title: "Kitchen Table", category: "Furniture", price: 700, rating: 4.6, image: "images/Kitchen Table.jpg", desc: "Good for multitask and also learning." },
-  { id: 6, title: "Rhema's Cakes", category: "Cakes", price: 800, rating: 4.8, image: "images/Rhema's Cakes.jpg", desc: "Freshly baked.Affordable.Made with love.We offer Cream cakes,Wedding & Occasion cakes plus Add-Ons.Price depends.Welcome All"},
+  { id: 6, title: "Rhema's Cakes", category: "Cakes", price: 800, rating: 4.8, image: "images/Rhema's-cake.jpg", desc: "Freshly baked.Affordable.Made with love.We offer Cream cakes,Wedding & Occasion cakes plus Add-Ons.Price depends.Welcome All"},
   { id: 7, title: "One Seater Sofa", category: "Furniture", price: 4500, rating: 4.7, image: "images/One Seater Sofa.jpg", desc: "Be your own boss and enjoy the comfort of your home." },
   { id: 8, title: "Study Table", category: "Furniture", price: 800, rating: 4.1, image: "images/Study Table.jpg", desc: "Your studies are made easier with space to store files." },
   { id: 9, title: "TCL Smart 32inch", category: "Accessories", price: 8000, rating: 4.6, image: "images/TCL smart 32inch.jpg", desc: "One month used, good as new." },
